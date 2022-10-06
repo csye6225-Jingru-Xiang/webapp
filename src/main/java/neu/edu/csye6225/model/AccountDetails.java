@@ -8,7 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "accountDetails")
+@Table(name = "account_details")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,7 +21,7 @@ public class AccountDetails {
     private String uuid;
 
     @Email(message = "Email should be valid!")
-    private String email;
+    private String username;
 
     @NotNull(message = "Can't be empty!")
     private String firstName;
@@ -32,6 +32,6 @@ public class AccountDetails {
     @NotNull(message = "Can't be empty!")
     private String password;
 
-    private Date account_created;
-    private Date account_updated;
+    private Date accountCreated;
+    private Date accountUpdated;
 }
