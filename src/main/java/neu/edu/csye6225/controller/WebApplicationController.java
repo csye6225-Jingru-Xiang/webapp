@@ -1,12 +1,12 @@
 package neu.edu.csye6225.controller;
 
-import neu.edu.csye6225.WebApplication;
 import neu.edu.csye6225.model.AccountDetails;
 import neu.edu.csye6225.service.UnauthorizedException;
 import neu.edu.csye6225.service.WebApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,20 +14,18 @@ import java.util.Base64;
 import org.json.JSONObject;
 
 @Controller
+@RequestMapping(path = "/v1/account")
 public class WebApplicationController {
 
+    @Autowired
     private WebApplicationService webApplicationService;
 
-    @Autowired
-    public WebApplicationController(WebApplicationService webApplicationService) {
-        this.webApplicationService = webApplicationService;
-    }
-
-    @GetMapping(value = "/v1/account/", produces = "application/json")
-    public ResponseEntity<String> getAccountDetails(@RequestHeader(value = "Authorization") String oauth){
-        String[] details = oauthEncode(oauth).split(":");
-        String email = details[0];
-        String password = details[1];
+    @GetMapping (path = "/{accountId}", produces = "application/json")
+    public ResponseEntity<String> getAccountDetails(@RequestHeader(value = "Authorization") String oauth, @PathVariable String accountId){
+        String authorization = oauthEncode(oauth);
+        String[] headerAuth = authorization.split(":");
+        String email = accountId;
+        String password = headerAuth[1];
         try {
             AccountDetails accountDetails = webApplicationService.getAccountDetails(email, password);
             JSONObject entity = webApplicationService.getJSON(accountDetails);
@@ -38,13 +36,14 @@ public class WebApplicationController {
         }
     }
 
-    @PostMapping(value = "/v1/account", produces = "application/json", consumes = "application/json")
+    @PostMapping(produces = "application/json", consumes = "application/json")
+    @ResponseBody
     public ResponseEntity<String> accountRegister(@RequestBody AccountDetails accountDetails){
         ResponseEntity<String> responseEntity;
         JSONObject entity = new JSONObject();
         try{
             if(accountDetails != null && webApplicationService.accountRegister(accountDetails)){
-                AccountDetails details = webApplicationService.getAccountDetails(accountDetails.getEmail(), accountDetails.getPassword());
+                AccountDetails details = webApplicationService.getAccountDetails(accountDetails.getUsername(), accountDetails.getPassword());
                 entity = webApplicationService.getJSON(details);
                 responseEntity = new ResponseEntity<>(entity.toString(), HttpStatus.CREATED);
             }else{
@@ -59,12 +58,13 @@ public class WebApplicationController {
         }
     }
 
-    @PutMapping(value = "/v1/user/")
-    public ResponseEntity<String> accountUpdate(@RequestHeader (value = "Authorization") String oauth, @RequestBody AccountDetails accountDetails){
+    @PutMapping(path = "/{accountId}")
+    public ResponseEntity<String> accountUpdate(@RequestHeader (value = "Authorization") String oauth, @RequestBody AccountDetails accountDetails, @PathVariable String accountId){
         ResponseEntity<String> responseEntity;
-        String[] details = oauthEncode(oauth).split(":");
-        String email = details[0];
-        String password = details[1];
+        String authorization = oauthEncode(oauth);
+        String[] headerAuth = authorization.split(":");
+        String email = accountId;
+        String password = headerAuth[1];
         String msg = webApplicationService.accountUpdate(email, password, accountDetails);
         if(msg.equals("Success")){
             responseEntity = new ResponseEntity<>(HttpStatus.OK);
@@ -82,7 +82,8 @@ public class WebApplicationController {
 
     // Decode Base64 Token
     public String oauthEncode(String oauth){
-        String decodedString = new String(Base64.getDecoder().decode(oauth.substring(6).getBytes()));
-        return decodedString;
+        assert oauth.substring(0, 6).equals("Basic");
+        String basicAuthStr = new String(Base64.getDecoder().decode(oauth.substring(6).getBytes()));
+        return basicAuthStr;
     }
 }
