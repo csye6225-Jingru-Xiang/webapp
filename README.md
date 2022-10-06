@@ -1,11 +1,11 @@
 # webapp
 
-###Student
+### Student
 Name: Jingru Xiang 
 
 NUID: 001586653
 
-###Prerequisites
+### Prerequisites
 * Java 11
 * Maven 3.8.6
 * SpringBoot
@@ -14,7 +14,7 @@ NUID: 001586653
 * MySql 8.0.28
 * Navicat for MYSQL
 
-###Build Instructions
+### Build Instructions
 1. In terminal, use git clone + ssh to clone project
 2. Open project in Intellij IDEA and use Maven to reload all the properties
 3. Create database 'db' in mysql with 'localhost:3306'
