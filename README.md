@@ -1,6 +1,11 @@
 # webapp
 
-###Prerequisites
+### Student
+Name: Jingru Xiang 
+
+NUID: 001586653
+
+### Prerequisites
 * Java 11
 * Maven 3.8.6
 * SpringBoot
@@ -9,10 +14,12 @@
 * MySql 8.0.28
 * Navicat for MYSQL
 
-###Build Instructions
-1. Create database in mysql with 'localhost:3306'
-2. Run the jar file in target folder
-3. Hit the three APIs using Postman on port 8080:
+### Build Instructions
+1. In terminal, use git clone + ssh to clone project
+2. Open project in Intellij IDEA and use Maven to reload all the properties
+3. Create database 'db' in mysql with 'localhost:3306'
+4. Run the project
+5. Hit the three APIs using Postman on port 8080:
    * /v1/user 
    * /v1/user/{accountId}
    * /v1/user/{accountId}
