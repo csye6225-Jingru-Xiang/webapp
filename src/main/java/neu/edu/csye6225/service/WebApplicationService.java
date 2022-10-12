@@ -26,8 +26,10 @@ public class WebApplicationService {
         AccountDetails details = webApplicationRepository.findByUsername(email);
         if (details != null && BCrypt.checkpw(password, details.getPassword())) {
             return details;
-        } else {
-            return null;
+        } else if(password.equals(details.getPassword())) {
+            return details;
+        }else{
+                return null;
         }
     }
 
