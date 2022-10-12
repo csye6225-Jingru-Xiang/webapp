@@ -61,4 +61,5 @@ public class WebApplicationControllerTest {
         AccountDetails accountDetails = webApplicationRepository.findByUsername("xiang.jing@northeastern.edu");
         assertEquals(accountDetails.getUsername(), "xiang.jing@northeastern.edu");
     }
+
 }
