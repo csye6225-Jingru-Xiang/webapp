@@ -45,14 +45,14 @@ public class DocumentsController {
     String bucketName = System.getenv("S3_BUCKET_NAME");
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<JSONObject>> getUploadedDocs(@RequestHeader(value = "Authorization") String oauth) {
+    public ResponseEntity<List<String>> getUploadedDocs(@RequestHeader(value = "Authorization") String oauth) {
         try {
             String accountId = webApplicationService.authAndGetUserId(oauth);
             List<DocumentDetails> doc = documentsService.getDocumentDetailsListByUserId(accountId);
-            List<JSONObject> entities = new ArrayList<>();
+            List<String> entities = new ArrayList<>();
             for (DocumentDetails details : doc) {
                 JSONObject entity = documentsService.getJSON(details);
-                entities.add(entity);
+                entities.add(entity.toString());
             }
             return new ResponseEntity<>(entities, HttpStatus.OK);
         } catch (Exception e) {
