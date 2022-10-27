@@ -1,5 +1,6 @@
 package neu.edu.csye6225.controller;
 
+import neu.edu.csye6225.service.ForbiddenException;
 import neu.edu.csye6225.service.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,4 +14,8 @@ public class ExceptionController {
         return new ResponseEntity<>("Unauthorized User", HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(value = ForbiddenException.class)
+    public ResponseEntity<Object> exception(ForbiddenException exception){
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
 }
