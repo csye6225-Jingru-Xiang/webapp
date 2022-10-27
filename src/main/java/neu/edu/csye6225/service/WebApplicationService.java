@@ -4,11 +4,14 @@ import neu.edu.csye6225.repository.WebApplicationRepository;
 import neu.edu.csye6225.model.AccountDetails;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
@@ -29,7 +32,7 @@ public class WebApplicationService {
         } else if(password.equals(details.getPassword())) {
             return details;
         }else{
-                return null;
+            return null;
         }
     }
 
@@ -63,14 +66,14 @@ public class WebApplicationService {
         return valid;
     }
 
-    public String accountUpdate(String email, String password, AccountDetails accountDetails){
+    public ResponseEntity<String> accountUpdate(String email, String password, AccountDetails accountDetails){
         boolean valid = validation(accountDetails);
         if(valid){
             if(accountDetails == null){
-                return "No Content";
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             if(!accountDetails.getUsername().equals(email)){
-                return "Bad Request";
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             AccountDetails details = webApplicationRepository.findByUsername(accountDetails.getUsername());
             if(details != null && BCrypt.checkpw(password, details.getPassword())){
@@ -80,10 +83,10 @@ public class WebApplicationService {
                 details.setAccountUpdated(new Date());
                 webApplicationRepository.save(details);
             }else{
-                return "Unauthorized";
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         }
-        return "Success";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public Boolean validation(AccountDetails accountDetails){
@@ -100,5 +103,25 @@ public class WebApplicationService {
             return false;
         }
         return true;
+    }
+
+    public String oauthEncode(String oauth){
+        assert oauth.substring(0, 6).equals("Basic");
+        String basicAuthStr = new String(Base64.getDecoder().decode(oauth.substring(6).getBytes()));
+        return basicAuthStr;
+    }
+
+    public String authAndGetUserId(String oauth){
+        String authorization = oauthEncode(oauth);
+        String[] headerAuth = authorization.split(":");
+        String username = headerAuth[0];
+        String password = headerAuth[1];
+        try {
+            AccountDetails accountDetails = getAccountDetails(username, password);
+            String accountId = accountDetails.getUuid();
+            return accountId;
+        }catch (NullPointerException e){
+            throw new UnauthorizedException();
+        }
     }
 }
