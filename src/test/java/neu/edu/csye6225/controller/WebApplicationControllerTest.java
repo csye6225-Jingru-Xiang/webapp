@@ -48,14 +48,6 @@ public class WebApplicationControllerTest {
         assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
     }
 
-    @Test(expected = StringIndexOutOfBoundsException.class)
-    public void BlankGetRequest() {
-        AccountDetails accountDetails = new AccountDetails();
-        accountDetails.setUsername("xiang.jing@northeastern.edu");
-        accountDetails.setPassword("xjr0928");
-        webApplicationController.getAccountDetails("", "xiang.jing@northeastern.edu");
-    }
-
     @Test
     public void findUsername() throws Exception {
         AccountDetails accountDetails = webApplicationRepository.findByUsername("xiang.jing@northeastern.edu");
