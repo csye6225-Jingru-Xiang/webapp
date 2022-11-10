@@ -39,16 +39,6 @@ public class WebApplicationControllerTest {
     }
 
     @Test
-    public void BlankPostRequest() {
-        when(webApplicationService.accountRegister(accountDetails)).thenReturn(true);
-        when(webApplicationService.getAccountDetails(accountDetails.getUsername(), accountDetails.getPassword())).thenReturn(accountDetails);
-        when(webApplicationService.getJSON(accountDetails)).thenReturn(responseEntity);
-
-        ResponseEntity<String> responseEntity = webApplicationController.accountRegister(accountDetails);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
-    }
-
-    @Test
     public void findUsername() throws Exception {
         AccountDetails accountDetails = webApplicationRepository.findByUsername("xiang.jing@northeastern.edu");
         assertEquals(accountDetails.getUsername(), "xiang.jing@northeastern.edu");
