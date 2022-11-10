@@ -56,6 +56,10 @@
             <artifactId>aws-java-sdk</artifactId>
             <version>1.12.335</version>
         </dependency>
+        <dependency>
+            <groupId>com.timgroup</groupId>
+            <artifactId>java-statsd-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
