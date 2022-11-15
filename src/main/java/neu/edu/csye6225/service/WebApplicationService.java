@@ -1,5 +1,6 @@
 package neu.edu.csye6225.service;
 
+import com.timgroup.statsd.StatsDClient;
 import neu.edu.csye6225.repository.WebApplicationRepository;
 import neu.edu.csye6225.model.AccountDetails;
 import org.json.JSONObject;
@@ -17,6 +18,9 @@ import java.util.UUID;
 
 @Service
 public class WebApplicationService {
+
+    @Autowired
+    private StatsDClient statsDClient;
 
     @Autowired
     private WebApplicationRepository webApplicationRepository;
@@ -66,7 +70,7 @@ public class WebApplicationService {
         return valid;
     }
 
-    public ResponseEntity<String> accountUpdate(String email, String password, AccountDetails accountDetails){
+    public ResponseEntity<String> accountUpdate(String email, String password, AccountDetails accountDetails, Long startTime){
         boolean valid = validation(accountDetails);
         if(valid){
             if(accountDetails == null){
@@ -86,6 +90,7 @@ public class WebApplicationService {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         }
+        statsDClient.recordExecutionTime("endpoint.user.http.put.timer", System.currentTimeMillis() - startTime);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
