@@ -79,9 +79,4 @@ build {
     ]
   }
 
-  provisioner "shell" {
-     scripts = [
-       "./ami/codedeploy.sh"
-     ]
-   }
 }
