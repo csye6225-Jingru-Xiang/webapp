@@ -40,6 +40,10 @@ public class WebApplicationService {
         }
     }
 
+    public AccountDetails getAccountDetails(String email) {
+        return webApplicationRepository.findByUsername(email);
+    }
+
     public JSONObject getJSON(AccountDetails accountDetails) {
         JSONObject entity = new JSONObject();
         entity.put("id", accountDetails.getUuid());
@@ -80,6 +84,9 @@ public class WebApplicationService {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             AccountDetails details = webApplicationRepository.findByUsername(accountDetails.getUsername());
+            if (!details.isAuthenticated()){
+                throw new UnauthorizedException();
+            }
             if(details != null && BCrypt.checkpw(password, details.getPassword())){
                 details.setPassword(BCrypt.hashpw(accountDetails.getPassword(), BCrypt.gensalt(12)));
                 details.setFirstName(accountDetails.getFirstName());
@@ -123,6 +130,9 @@ public class WebApplicationService {
         String password = headerAuth[1];
         try {
             AccountDetails accountDetails = getAccountDetails(username, password);
+            if (accountDetails != null && !accountDetails.isAuthenticated()) {
+                throw new UnauthorizedException();
+            }
             String accountId = accountDetails.getUuid();
             return accountId;
         }catch (NullPointerException e){
