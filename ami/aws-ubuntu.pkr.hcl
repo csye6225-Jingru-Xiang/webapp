@@ -78,4 +78,10 @@ build {
       "./ami/runinstall.sh"
     ]
   }
+
+  provisioner "shell" {
+     scripts = [
+       "./ami/codedeploy.sh"
+     ]
+   }
 }
