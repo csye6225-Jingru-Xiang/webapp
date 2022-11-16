@@ -27,7 +27,7 @@ public class EmailAuthService {
     @Value("${sns.topic.arn}")
     private String snsTopicARN;
 
-    private static final String LINK = "https://prod.spicyrice.me/v2/verifyUserEmail?email=user.getUsername()&token=token";
+    private static final String LINK = "https://prod.rubyxjr.me/v2/verifyUserEmail?email=user.getUsername()&token=token";
 
     public void trigger(AccountDetails accountDetails) {
         String token = getToken(accountDetails);
