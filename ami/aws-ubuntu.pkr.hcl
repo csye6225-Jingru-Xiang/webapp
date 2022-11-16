@@ -55,13 +55,22 @@ build {
   provisioner "shell" {
     inline = [
       "sudo apt-get update -y",
-      "sudo apt-get install -y openjdk-11-jdk-headless"
+      "sudo apt-get install -y openjdk-11-jdk-headless",
+      "sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb",
+      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
+      "cd /var/log && sudo touch webapp.log",
+      "sudo chmod 666 webapp.log"
     ]
   }
 
   provisioner "file" {
     source      = "./target/webapp-1.0-SNAPSHOT.jar"
     destination = "~/webapp-1.0-SNAPSHOT.jar"
+  }
+
+  provisioner "file" {
+    source      = "./ami/cloudwatch.json"
+    destination = "~/cloudwatch.json"
   }
 
   provisioner "shell" {
