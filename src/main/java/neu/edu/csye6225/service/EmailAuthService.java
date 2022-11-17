@@ -31,6 +31,7 @@ public class EmailAuthService {
     @Value("${sns.topic.arn}")
     private String snsTopicARN;
 
+
     public void trigger(AccountDetails accountDetails) throws UnsupportedEncodingException {
         log.info("start trigger,accountDetails:{}", JSONObject.valueToString(accountDetails));
         String token = getToken(accountDetails);
