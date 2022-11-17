@@ -1,6 +1,7 @@
 package neu.edu.csye6225.service;
 
 import com.timgroup.statsd.StatsDClient;
+import lombok.extern.slf4j.Slf4j;
 import neu.edu.csye6225.repository.WebApplicationRepository;
 import neu.edu.csye6225.model.AccountDetails;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class WebApplicationService {
 
@@ -38,6 +40,10 @@ public class WebApplicationService {
         }else{
             return null;
         }
+    }
+
+    public AccountDetails getAccountDetails(String email) {
+        return webApplicationRepository.findByUsername(email);
     }
 
     public JSONObject getJSON(AccountDetails accountDetails) {
@@ -70,6 +76,15 @@ public class WebApplicationService {
         return valid;
     }
 
+    public void accountUpdate(AccountDetails accountDetails) {
+        try {
+            webApplicationRepository.save(accountDetails);
+        } catch (Exception e) {
+            log.error("webApplicationRepository.save(accountDetails) error", e);
+            throw e;
+        }
+    }
+
     public ResponseEntity<String> accountUpdate(String email, String password, AccountDetails accountDetails, Long startTime){
         boolean valid = validation(accountDetails);
         if(valid){
@@ -80,6 +95,10 @@ public class WebApplicationService {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             AccountDetails details = webApplicationRepository.findByUsername(accountDetails.getUsername());
+            if (details != null && details.getAuthenticated() != null && !details.getAuthenticated()) {
+                log.error("account is not active");
+                throw new UnauthorizedException();
+            }
             if(details != null && BCrypt.checkpw(password, details.getPassword())){
                 details.setPassword(BCrypt.hashpw(accountDetails.getPassword(), BCrypt.gensalt(12)));
                 details.setFirstName(accountDetails.getFirstName());
@@ -123,6 +142,10 @@ public class WebApplicationService {
         String password = headerAuth[1];
         try {
             AccountDetails accountDetails = getAccountDetails(username, password);
+            if (accountDetails != null && accountDetails.getAuthenticated() != null && !accountDetails.getAuthenticated()) {
+                log.error("account is not active");
+                throw new UnauthorizedException();
+            }
             String accountId = accountDetails.getUuid();
             return accountId;
         }catch (NullPointerException e){
