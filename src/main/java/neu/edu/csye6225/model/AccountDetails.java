@@ -36,7 +36,7 @@ public class AccountDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private boolean authenticated;
+    private Boolean authenticated;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date accountCreated;
