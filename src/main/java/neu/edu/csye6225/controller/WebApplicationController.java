@@ -42,7 +42,6 @@ public class WebApplicationController {
         this.webApplicationService = webApplicationService;
     }
 
-
     @GetMapping (path = "/v1/account/{accountId}", produces = "application/json")
     public ResponseEntity<String> getAccountDetails(@RequestHeader(value = "Authorization") String oauth, @PathVariable String accountId){
         long startTime = System.currentTimeMillis();

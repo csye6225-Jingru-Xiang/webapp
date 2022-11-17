@@ -86,7 +86,6 @@ public class WebApplicationService {
     }
 
     public ResponseEntity<String> accountUpdate(String email, String password, AccountDetails accountDetails, Long startTime){
-
         boolean valid = validation(accountDetails);
         if(valid){
             if(accountDetails == null){
