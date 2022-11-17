@@ -36,7 +36,7 @@ public class EmailAuthService {
         String token = getToken(accountDetails);
         try {
             dynamoRepository.save(AccountTokenItem.builder()
-                    .email(URLEncoder.encode(accountDetails.getUsername(),"utf-8"))
+                    .email(accountDetails.getUsername())
                     .token(token)
                     .ttl(getAfterFiveMinute())
                     .build());
@@ -58,11 +58,11 @@ public class EmailAuthService {
     }
 
 
-    private void send(AccountDetails accountDetails, String token) {
+    private void send(AccountDetails accountDetails, String token) throws UnsupportedEncodingException {
         try {
             String LINK = "http://prod.rubyxjr.me/v2/verifyUserEmail?email=" + accountDetails.getUsername() + "&token=" + token;
             Map<String, String> msg = new HashMap<>();
-            msg.put("first_name",accountDetails.getFirstName());
+            msg.put("first_name",URLEncoder.encode(accountDetails.getFirstName(),"utf-8"));
             msg.put("username",accountDetails.getUsername());
             msg.put("link",LINK);
             msg.put("one_time_token",token);
