@@ -31,7 +31,6 @@ public class EmailAuthService {
     @Value("${sns.topic.arn}")
     private String snsTopicARN;
 
-
     public void trigger(AccountDetails accountDetails) throws UnsupportedEncodingException {
         log.info("start trigger,accountDetails:{}", JSONObject.valueToString(accountDetails));
         String token = getToken(accountDetails);
@@ -59,11 +58,11 @@ public class EmailAuthService {
     }
 
 
-    private void send(AccountDetails accountDetails, String token) {
+    private void send(AccountDetails accountDetails, String token) throws UnsupportedEncodingException {
         try {
             String LINK = "http://prod.rubyxjr.me/v2/verifyUserEmail?email=" + accountDetails.getUsername() + "&token=" + token;
             Map<String, String> msg = new HashMap<>();
-            msg.put("first_name",accountDetails.getFirstName());
+            msg.put("first_name",URLEncoder.encode(accountDetails.getFirstName(),"utf-8"));
             msg.put("username",accountDetails.getUsername());
             msg.put("link",LINK);
             msg.put("one_time_token",token);
