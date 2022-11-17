@@ -86,6 +86,7 @@ public class WebApplicationService {
     }
 
     public ResponseEntity<String> accountUpdate(String email, String password, AccountDetails accountDetails, Long startTime){
+
         boolean valid = validation(accountDetails);
         if(valid){
             if(accountDetails == null){
@@ -95,7 +96,7 @@ public class WebApplicationService {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             AccountDetails details = webApplicationRepository.findByUsername(accountDetails.getUsername());
-            if (details != null && details.getAuthenticated() != null && !details.getAuthenticated()) {
+            if (details == null || details.getAuthenticated() == null || !details.getAuthenticated()) {
                 log.error("account is not active");
                 throw new UnauthorizedException();
             }
@@ -142,7 +143,7 @@ public class WebApplicationService {
         String password = headerAuth[1];
         try {
             AccountDetails accountDetails = getAccountDetails(username, password);
-            if (accountDetails != null && accountDetails.getAuthenticated() != null && !accountDetails.getAuthenticated()) {
+            if (accountDetails == null || accountDetails.getAuthenticated() == null || !accountDetails.getAuthenticated()) {
                 log.error("account is not active");
                 throw new UnauthorizedException();
             }
