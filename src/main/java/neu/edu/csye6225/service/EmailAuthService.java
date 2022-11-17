@@ -27,8 +27,6 @@ public class EmailAuthService {
     @Value("${sns.topic.arn}")
     private String snsTopicARN;
 
-    private static final String LINK = "https://prod.rubyxjr.me/v2/verifyUserEmail?email=user.getUsername()&token=token";
-
     public void trigger(AccountDetails accountDetails) {
         String token = getToken(accountDetails);
         dynamoRepository2.save(AccountTokenItem.builder()
@@ -46,6 +44,7 @@ public class EmailAuthService {
 
 
     private void send(AccountDetails accountDetails, String token) {
+        String LINK = "https://prod.rubyxjr.me/v2/verifyUserEmail?email="+ accountDetails.getUsername() + "&token=" + token;
         Message build = Message.builder()
                 .first_name(accountDetails.getFirstName())
                 .username(accountDetails.getUsername())
