@@ -54,7 +54,7 @@ public class WebApplicationController {
             String email = accountId;
             String password = headerAuth[1];
             AccountDetails accountDetails = webApplicationService.getAccountDetails(email, password);
-            if (accountDetails != null && accountDetails.getAuthenticated() != null && !accountDetails.getAuthenticated()) {
+            if (accountDetails == null || accountDetails.getAuthenticated() == null || !accountDetails.getAuthenticated()) {
                 log.error("account is not active");
                 throw new UnauthorizedException();
             }

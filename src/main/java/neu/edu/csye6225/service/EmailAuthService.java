@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -29,12 +31,12 @@ public class EmailAuthService {
     @Value("${sns.topic.arn}")
     private String snsTopicARN;
 
-    public void trigger(AccountDetails accountDetails) {
+    public void trigger(AccountDetails accountDetails) throws UnsupportedEncodingException {
         log.info("start trigger,accountDetails:{}", JSONObject.valueToString(accountDetails));
         String token = getToken(accountDetails);
         try {
             dynamoRepository.save(AccountTokenItem.builder()
-                    .email(accountDetails.getUsername())
+                    .email(URLEncoder.encode(accountDetails.getUsername(),"utf-8"))
                     .token(token)
                     .ttl(getAfterFiveMinute())
                     .build());
