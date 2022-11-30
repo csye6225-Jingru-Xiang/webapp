@@ -18,28 +18,10 @@ public class DynamoConfig {
     @Value("${aws.s3.region}")
     private String region;
 
-    @Value("${aws.access_key_id}")
-    private String accessKeyId;
-
-    @Value("${aws.secret_access_key}")
-    private String secretAccessKey;
-
-    @Bean
-    public DynamoDbClient dynamoDbClient() {
-        return DynamoDbClient.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
-                .build();
-    }
-
     @Bean
     public DynamoDBMapper dynamoDBMapper() {
-
-        AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKeyId, secretAccessKey));
-
         return new DynamoDBMapper(AmazonDynamoDBClientBuilder.standard()
-                .withCredentials(awsCredentialsProvider)
+                .withRegion(region)
                 .build());
     }
 }
