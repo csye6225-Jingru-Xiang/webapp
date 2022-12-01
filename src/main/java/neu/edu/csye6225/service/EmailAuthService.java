@@ -36,7 +36,7 @@ public class EmailAuthService {
         String token = getToken(accountDetails);
         try {
             dynamoRepository.save(AccountTokenItem.builder()
-                    .email(accountDetails.getUsername())
+                    .email(URLEncoder.encode(accountDetails.getUsername(),"utf-8"))
                     .token(token)
                     .ttl(getAfterFiveMinute())
                     .build());
