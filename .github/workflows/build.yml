@@ -42,6 +42,10 @@ jobs:
           command: validate
           arguments: -syntax-only
           target: ./ami/aws-ubuntu.pkr.hcl
+      - name: Install Jq
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: jq -n env
   build:
     name: Build Artifact and AMI
     runs-on: ubuntu-latest
@@ -81,6 +85,29 @@ jobs:
         run: packer build ./ami/aws-ubuntu.pkr.hcl
         env:
           PACKER_LOG: 1
+      - name: Extract version from manifest.json
+        uses: sergeysova/jq-action@v2
+        id: ami
+        with:
+          cmd: jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2
+      - name: Commit message to git env
+        run: echo "ami=${{steps.ami.outputs.value}}" >> $GITHUB_ENV
+      - name: Create a new Launch template
+        run: |
+          aws ec2 create-launch-template-version \
+              --launch-template-name asg_launch_config \
+              --version-description asg_launch_config \
+              --source-version 1 \
+              --launch-template-data "ImageId=${{env.ami}}"
+      - name: Use lastest version of launch template to update autoscaling group
+        run: |
+          aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name asg_launch_config \
+              --launch-template LaunchTemplateName=asg_launch_config,Version='$Latest'
+      - name: Refresh Instance
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name asg_launch_config
+
 
 
 

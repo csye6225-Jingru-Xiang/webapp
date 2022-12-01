@@ -79,4 +79,12 @@ build {
     ]
   }
 
+  post-processor "manifest" {
+    output = "manifest.json"
+    strip_path = true
+    custom_data = {
+       my_custom_data = "example"
+    }
+  }
+
 }
