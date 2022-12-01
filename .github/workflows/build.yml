@@ -103,7 +103,7 @@ jobs:
         run: |
           aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name asg_launch_config \
-              --launch-template LaunchTemplateId=lt-2,Version='$Latest'
+              --launch-template LaunchTemplateName=asg_launch_config,Version='$Latest'
       - name: Refresh Instance
         run: |
           aws autoscaling start-instance-refresh --auto-scaling-group-name asg_launch_config —preferences MinHealthyPercentage=90,InstanceWarmup=300
