@@ -90,15 +90,15 @@ jobs:
         id: ami
         with:
           cmd: jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2
-      - name: Find new AMI
-        run: echo "ami ${{steps.ami.outputs.value}}" >> $GITHUB_ENV
+      - name: Commit message to git env
+        run: echo "ami=${{steps.ami.outputs.value}}" >> $GITHUB_ENV
       - name: Create a new Launch template
         run: |
           aws ec2 create-launch-template-version \
               --launch-template-id lt-2 \
               --version-description asg_launch_config_2 \
               --source-version 1 \
-              --launch-template-data "ImageId=env.ami"
+              --launch-template-data "ImageId=${env.ami}"
       - name: Use lastest version of launch template to update autoscaling group
         run: |
           aws autoscaling update-auto-scaling-group \
