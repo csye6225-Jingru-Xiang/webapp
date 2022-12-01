@@ -82,9 +82,9 @@ jobs:
         env:
           PACKER_LOG: 1
       - name: Find new AMI
-        env:
-          AMI_ID: ${{jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2}}
-        run: echo "ami=${AMI_ID}" >> $GITHUB_ENV
+        run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+          echo "ami=${AMI_ID}" >> $GITHUB_ENV
       - name: Create a new Launch template
         run: |
           aws ec2 create-launch-template-version \
