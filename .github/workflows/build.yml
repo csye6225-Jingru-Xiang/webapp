@@ -98,7 +98,7 @@ jobs:
               --launch-template-id lt-2 \
               --version-description asg_launch_config_2 \
               --source-version 1 \
-              --launch-template-data "ImageId=${env.ami}"
+              --launch-template-data "ImageId=${{env.ami}}"
       - name: Use lastest version of launch template to update autoscaling group
         run: |
           aws autoscaling update-auto-scaling-group \
