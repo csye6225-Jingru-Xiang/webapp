@@ -1,6 +1,7 @@
 package neu.edu.csye6225.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public class AccountTokenItem {
     private String token;
     private Long ttl;
 
-    @DynamoDBAttribute(attributeName="Email")
+    @DynamoDBHashKey(attributeName="Email")
     public String getEmail() {
         return email;
     }
