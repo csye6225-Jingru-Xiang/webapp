@@ -81,6 +81,26 @@ jobs:
         run: packer build ./ami/aws-ubuntu.pkr.hcl
         env:
           PACKER_LOG: 1
+      - name: Find new AMI
+        env:
+          AMI_ID: ${{jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2}}
+        run: echo "ami=${AMI_ID}" >> $GITHUB_ENV
+      - name: Create a new Launch template
+        run: |
+          aws ec2 create-launch-template-version \
+              --launch-template-id lt-2 \
+              --version-description asg_launch_config_2 \
+              --source-version 1 \
+              --launch-template-data "ImageId=env.ami"
+      - name: Use lastest version of launch template to update autoscaling group
+        run: |
+          aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name asg_launch_config \
+              --launch-template LaunchTemplateId=lt-2,Version='$Latest'
+      - name: Refresh Instance
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name asg_launch_config —preferences MinHealthyPercentage=90,InstanceWarmup=300
+
 
 
 
