@@ -95,8 +95,8 @@ jobs:
       - name: Create a new Launch template
         run: |
           aws ec2 create-launch-template-version \
-              --launch-template-id lt-2 \
-              --version-description asg_launch_config_2 \
+              --launch-template-name asg_launch_config_ci_cd \
+              --version-description asg_launch_config_ci_cd \
               --source-version 1 \
               --launch-template-data "ImageId=${{env.ami}}"
       - name: Use lastest version of launch template to update autoscaling group
