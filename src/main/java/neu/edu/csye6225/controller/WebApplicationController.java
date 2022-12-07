@@ -69,7 +69,7 @@ public class WebApplicationController {
         }
     }
 
-    @PostMapping(path = "/v1/account", produces = "application/json", consumes = "application/json")
+    @PostMapping(path = "/v2/account", produces = "application/json", consumes = "application/json")
     @ResponseBody
     public ResponseEntity<String> accountRegister(@RequestBody AccountDetails accountDetails){
         long startTime = System.currentTimeMillis();
